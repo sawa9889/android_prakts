@@ -6,7 +6,7 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import android.util.Log;
+
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -21,7 +21,8 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener, CalculatorFragment.OnFragmentInteractionListener {
+        implements NavigationView.OnNavigationItemSelectedListener, CalculatorFragment.OnFragmentInteractionListener,
+        BlankFragment.OnFragmentInteractionListener,GogleMap.OnFragmentInteractionListener{
 
 
 
@@ -76,12 +77,7 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
             return true;
         }
@@ -94,31 +90,53 @@ public class MainActivity extends AppCompatActivity
     public boolean onNavigationItemSelected(MenuItem item) {
         // Handle navigation view item clicks here.
         int id = item.getItemId();
-        Fragment fragment = new Fragment();
-        Class FragmentClass = CalculatorFragment.class;
-//        if (id == R.id.nav_camera) {
-//            // Handle the camera action
-//        } else if (id == R.id.nav_gallery) {
-//
-//        } else if (id == R.id.nav_slideshow) {
-//
-//        } else if (id == R.id.nav_manage) {
-//
-//        } else if (id == R.id.nav_share) {
-//
-//        } else if (id == R.id.nav_send) {
-//
-//        }
+        if (id == R.id.nav_calculator) {
+            Fragment fragment = new Fragment();
+            Class FragmentClass = CalculatorFragment.class;
+            try{
+                fragment = (Fragment) FragmentClass.newInstance();
+            }catch (IllegalAccessException | InstantiationException e){
+                e.getLocalizedMessage();
+            }
+            FragmentManager fragmentManager = getSupportFragmentManager();
+            fragmentManager.beginTransaction().replace(R.id.container,fragment).commit();
+            item.setChecked(true);
+            setTitle(item.getTitle());
+        } else if (id == R.id.nav_map) {
 
-        try{
-            fragment = (Fragment) FragmentClass.newInstance();
-        }catch (IllegalAccessException | InstantiationException e){
-            e.getLocalizedMessage();
+            Fragment fragment = new Fragment();
+            //mapFragment.getMapAsync(this);
+            Class google = GogleMap.class;
+            Fragment mMapFragment = null;
+            try {
+                mMapFragment = (Fragment) google.newInstance();
+            } catch (IllegalAccessException | InstantiationException e) {
+                e.printStackTrace();
+            }
+            FragmentManager fragmentManager = getSupportFragmentManager();
+            fragmentManager.beginTransaction().replace(R.id.container,mMapFragment).commit();
+            item.setChecked(true);
+            setTitle(item.getTitle());
+        } else if (id == R.id.nav_manage) {
+
+            Fragment fragment = new Fragment();
+            Class FragmentClass = BlankFragment.class;
+            try{
+                fragment = (Fragment) FragmentClass.newInstance();
+            }catch (IllegalAccessException | InstantiationException e){
+                e.getLocalizedMessage();
+            }
+            FragmentManager fragmentManager = getSupportFragmentManager();
+            fragmentManager.beginTransaction().replace(R.id.container,fragment).commit();
+            item.setChecked(true);
+            setTitle(item.getTitle());
+
+        } else if (id == R.id.nav_share) {
+
+        } else if (id == R.id.nav_send) {
+
         }
-        FragmentManager fragmentManager = getSupportFragmentManager();
-        fragmentManager.beginTransaction().replace(R.id.container,fragment).commit();
-        item.setChecked(true);
-        setTitle(item.getTitle());
+
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
@@ -190,4 +208,6 @@ public class MainActivity extends AppCompatActivity
         ((TextView) findViewById(R.id.Last)).setText(operand.toString().replace('.', ','));
         ((EditText)findViewById(R.id.Number)).setText("");
     }
+
+
 }
